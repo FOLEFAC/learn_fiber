@@ -11,10 +11,9 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/gofiber/swagger"
 	_ "github.com/jackc/pgx/v4/stdlib" // load pgx driver for PostgreSQL
 	"github.com/jmoiron/sqlx"
-
-	swagger "github.com/arsmn/fiber-swagger"
 )
 
 type Post struct {
@@ -56,7 +55,7 @@ func (q *PostQueries) GetPost(id uuid.UUID) (Post, error) {
 
 // GetUsers method for getting all users.
 func (q *PostQueries) GetPosts() ([]Post, error) {
-	// Define users variable.
+	// Define posts variable.
 	posts := []Post{}
 
 	// Define query string.
@@ -387,7 +386,7 @@ func UpdatePostHandler(c *fiber.Ctx) error {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host localhost:3000
+// @host localhost:4000
 // @BasePath /
 // @schemes http
 func main() {
@@ -398,12 +397,12 @@ func main() {
 	app.Post("/user/new", createPostHandler)
 	app.Patch("/user/update", UpdatePostHandler)
 	//app.Delete("/user/delete/:id", deleteUserHandler)
-
+	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.SendString("Hello World")
 	})
 
-	app.Get("/swagger/*", swagger.Handler) // default
+	//app.Get("/swagger/*", swagger.Handler) // default
 
 	app.Listen(":4000")
 
