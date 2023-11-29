@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func createUserHandler(c *fiber.Ctx) error {
+func CreateUserHandler(c *fiber.Ctx) error {
 	// Create new User struct
 	signUp := &User{}
 
