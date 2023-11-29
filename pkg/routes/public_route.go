@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/FOLEFAC/learn_fiber/app/handlers"
 	"github.com/gofiber/fiber/v2"
 )
 

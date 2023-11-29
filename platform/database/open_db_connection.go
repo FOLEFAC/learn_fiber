@@ -1,5 +1,9 @@
 package database
 
+import (
+	_ "github.com/FOLEFAC/learn_fiber/pkg/routes"
+)
+
 // Queries struct for collect all app queries.
 type Queries struct {
 	*PostQueries // load queries from Post Model
