@@ -3,12 +3,12 @@ package main
 // migrate -path ./migrations -database "postgres://postgres:ladder-99@localhost:5433/cleeroute?sslmode=disable" up 1
 // export PATH=$(go env GOPATH)/bin:$PATH// export PATH=$(go env GOPATH)/bin:$PATH
 
+//"github.com/FOLEFAC/learn_fiber/tree/main/pkg/routes"
 import (
-	"github.com/create-go-app/fiber-go-template/pkg/routes"
-
+	"github.com/FOLEFAC/learn_fiber/pkg/routes"
 	"github.com/gofiber/fiber/v2"
 
-	_ "github.com/create-go-app/fiber-go-template/docs" // load API Docs files (Swagger)
+	_ "https://github.com/FOLEFAC/learn_fiber/tree/main/docs" // load API Docs files (Swagger)
 
 	_ "github.com/joho/godotenv/autoload" // load .env file automatically
 )
