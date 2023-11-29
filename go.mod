@@ -1,4 +1,4 @@
-module learn-fiber
+module github.com/FOLEFAC/learn_fiber
 
 go 1.21.4
 
