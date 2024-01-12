@@ -13,10 +13,9 @@ func PublicRoutes(a *fiber.App) {
 	// Routes for GET method:
 	route.Get("/posts", handlers.GetPostsHandler)
 	route.Get("/post/:id", handlers.GetSinglePostHandler)
-	route.Post("/post/new", handlers.CreatePostHandler)
-	route.Patch("/post/update", handlers.UpdatePostHandler)
 
 	// Routes for POST method:
+	route.Post("/user/login", handlers.UserSignIn)
 	route.Post("/user/new", handlers.CreateUserHandler) // register a new user
 
 }

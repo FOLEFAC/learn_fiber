@@ -12,4 +12,5 @@ type Post struct {
 	Title     string    `db:"title" json:"title" validate:"required,min=10"`
 	Content   string    `db:"content" json:"content" validate:"required"`
 	Published bool      `db:"published" json:"published"`
+	UserId    uuid.UUID `db:"user_id" json:"user_id" validate:"required,uuid"`
 }

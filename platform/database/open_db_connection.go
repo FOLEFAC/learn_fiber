@@ -1,13 +1,11 @@
 package database
 
-import (
-	_ "github.com/FOLEFAC/learn_fiber/pkg/routes"
-)
+import "github.com/FOLEFAC/learn_fiber/app/queries"
 
 // Queries struct for collect all app queries.
 type Queries struct {
-	*PostQueries // load queries from Post Model
-	*UserQueries // load queries from User Model
+	*queries.PostQueries // load queries from Post Model
+	*queries.UserQueries // load queries from User Model
 }
 
 // OpenDBConnection func for opening database connection.
@@ -20,8 +18,8 @@ func OpenDBConnection() (*Queries, error) {
 
 	return &Queries{
 		// Set queries from models:
-		PostQueries: &PostQueries{DB: db}, // from Post model
-		UserQueries: &UserQueries{DB: db}, // from Post model
+		PostQueries: &queries.PostQueries{DB: db}, // from Post model
+		UserQueries: &queries.UserQueries{DB: db}, // from Post model
 
 	}, nil
 }

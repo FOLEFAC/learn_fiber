@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/FOLEFAC/learn_fiber/app/models"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -14,9 +15,9 @@ type PostQueries struct {
 }
 
 // GetBook method for getting one book by given ID.
-func (q *PostQueries) GetPost(id uuid.UUID) (Post, error) {
+func (q *PostQueries) GetPost(id uuid.UUID) (models.Post, error) {
 	// Define book variable.
-	post := Post{}
+	post := models.Post{}
 
 	// Define query string.
 	query := `SELECT * FROM posts WHERE id = $1`
@@ -33,9 +34,9 @@ func (q *PostQueries) GetPost(id uuid.UUID) (Post, error) {
 }
 
 // GetUsers method for getting all users.
-func (q *PostQueries) GetPosts() ([]Post, error) {
+func (q *PostQueries) GetPosts() ([]models.Post, error) {
 	// Define posts variable.
-	posts := []Post{}
+	posts := []models.Post{}
 
 	// Define query string.
 	query := `SELECT * FROM posts`
@@ -52,13 +53,13 @@ func (q *PostQueries) GetPosts() ([]Post, error) {
 }
 
 // CreateBook method for creating book by given Book object.
-func (q *PostQueries) CreatePost(p *Post) error {
+func (q *PostQueries) CreatePost(p *models.Post) error {
 	// Define query string.
-	query := `INSERT INTO posts VALUES ($1, $2, $3, $4, $5)`
+	query := `INSERT INTO posts VALUES ($1, $2, $3, $4, $5, $6)`
 	//fmt.Println(strconv.FormatBool(p.Published))
 
 	// Send query to database.
-	_, err := q.Exec(query, p.Id, p.CreatedAt, p.Title, p.Content, strconv.FormatBool(p.Published))
+	_, err := q.Exec(query, p.Id, p.CreatedAt, p.Title, p.Content, strconv.FormatBool(p.Published), p.UserId)
 	if err != nil {
 		// Return only error.
 		fmt.Println("okay", err)
@@ -70,7 +71,7 @@ func (q *PostQueries) CreatePost(p *Post) error {
 }
 
 // UpdateBook method for updating book by given Book object.
-func (q *PostQueries) UpdatePost(id uuid.UUID, p *Post) error {
+func (q *PostQueries) UpdatePost(id uuid.UUID, p *models.Post) error {
 	// Define query string.
 	query := `UPDATE posts SET title = $2, content = $3, published = $4 WHERE id = $1`
 

@@ -6,6 +6,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+
+	"github.com/FOLEFAC/learn_fiber/app/models"
+	"github.com/FOLEFAC/learn_fiber/pkg/utils"
+	"github.com/FOLEFAC/learn_fiber/platform/database"
 )
 
 func GetSinglePostHandler(c *fiber.Ctx) error {
@@ -19,7 +23,7 @@ func GetSinglePostHandler(c *fiber.Ctx) error {
 	}
 
 	// Create database connection.
-	db, err := OpenDBConnection()
+	db, err := database.OpenDBConnection()
 	if err != nil {
 		// Return status 500 and database connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -58,7 +62,7 @@ func GetSinglePostHandler(c *fiber.Ctx) error {
 func GetPostsHandler(ctx *fiber.Ctx) error {
 
 	// Create database connection.
-	db, err := OpenDBConnection()
+	db, err := database.OpenDBConnection()
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -94,8 +98,45 @@ func GetPostsHandler(ctx *fiber.Ctx) error {
 
 func CreatePostHandler(c *fiber.Ctx) error {
 
+	// Get now time.
+	now := time.Now().Unix()
+
+	// Get claims from JWT.
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		// Return status 500 and JWT parse error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Set expiration time from JWT data of current book.
+	expires := claims.Expires
+
+	// Checking, if now time greather than expiration from JWT.
+	if now > expires {
+		// Return status 401 and unauthorized error message.
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized, check expiration time of your token",
+		})
+	}
+
+	// Set credential `book:create` from JWT data of current book.
+	credential := claims.Credentials["post:create"]
+
+	// Only user with `book:create` credential can create a new book.
+	if !credential {
+		// Return status 403 and permission denied error message.
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": true,
+			"msg":   "permission denied, check credentials of your token",
+		})
+	}
+
 	// Create new Book struct
-	post := &Post{}
+	post := &models.Post{}
 
 	// Check, if received JSON data is valid.
 	if err := c.BodyParser(post); err != nil {
@@ -107,7 +148,7 @@ func CreatePostHandler(c *fiber.Ctx) error {
 	}
 
 	// Create database connection.
-	db, err := OpenDBConnection()
+	db, err := database.OpenDBConnection()
 	if err != nil {
 		// Return status 500 and database connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -117,18 +158,20 @@ func CreatePostHandler(c *fiber.Ctx) error {
 	}
 
 	// Create a new validator for a Book model.
-	validate := NewValidator()
+	validate := utils.NewValidator()
 
 	// Set initialized default data for book:
 	post.Id = uuid.New()
+	post.UserId = claims.UserID
 	post.CreatedAt = time.Now()
 	post.Published = false
+
 	// Validate book fields.
 	if err := validate.Struct(post); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
-			"msg":   ValidatorErrors(err),
+			"msg":   utils.ValidatorErrors(err),
 		})
 	}
 
@@ -152,7 +195,7 @@ func CreatePostHandler(c *fiber.Ctx) error {
 func UpdatePostHandler(c *fiber.Ctx) error {
 
 	// Create new Book struct
-	post := &Post{}
+	post := &models.Post{}
 
 	// Check, if received JSON data is valid.
 	if err := c.BodyParser(post); err != nil {
@@ -164,7 +207,7 @@ func UpdatePostHandler(c *fiber.Ctx) error {
 	}
 
 	// Create database connection.
-	db, err := OpenDBConnection()
+	db, err := database.OpenDBConnection()
 	if err != nil {
 		// Return status 500 and database connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -184,14 +227,14 @@ func UpdatePostHandler(c *fiber.Ctx) error {
 	}
 
 	// Create a new validator for a Book model.
-	validate := NewValidator()
+	validate := utils.NewValidator()
 
 	// Validate book fields.
 	if err := validate.Struct(post); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
-			"msg":   ValidatorErrors(err),
+			"msg":   utils.ValidatorErrors(err),
 		})
 	}
 
