@@ -5,7 +5,7 @@ package main
 
 // usermod -aG sudo martins
 
-// migrate -path ./migrations -database "postgres://postgres:ladder-99@localhost:5433/cleeroute?sslmode=disable" up 1
+// migrate -path ./migrations -database "postgres://postgres:xxxxxx@localhost:5433/cleeroute?sslmode=disable" up 1
 // export PATH=$(go env GOPATH)/bin:$PATH// export PATH=$(go env GOPATH)/bin:$PATH
 // export PATH=$PATH:/usr/local/go/bin
 import (
